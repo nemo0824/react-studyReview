@@ -1,11 +1,14 @@
-import ToDoList from "./components/ToDoList";
+
+import { useEffect } from 'react';
+import Home from './components/Home';
 
 function App() {
+
   return (
-   <div>
-    <ToDoList/>
-   </div>
-  );
+    <>
+    <Home></Home>
+    </>
+  )
 }
 
 export default App;
