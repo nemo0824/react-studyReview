@@ -1,8 +1,50 @@
 import { useEffect } from "react";
 import { useState } from "react";
+import styled from "styled-components";
 import axios from "axios";
 import Fotmob from "fotmob";
 import { response } from "express";
+
+const Loader = styled.div`
+    height: 20vh;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`
+const Wrapper = styled.div`
+    padding: 0px 20px;
+    margin: 0 auto;
+`
+
+const Row = styled.div`
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+`
+
+const Card = styled.div`
+    border: 1px solid #ccc;
+    padding: 16px;
+    margin: 8px;
+    width: calc(25% - 16px);
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    
+`;
+
+const CardTittle = styled.li`
+    list-style-type: none;
+    list-style: none;
+`
+
+
+
+
+
+
+ 
 
 interface ICompetition{
    id:number;
@@ -10,14 +52,13 @@ interface ICompetition{
    type:string;
    code:string;
    flag:string;
+   emblem:string;
 }
+
 
 interface ICategory{
     competitions: ICompetition[]
 }
-
-
-
 
 function Home(){
     const [todayMatch, setTodayMatch] = useState<ICompetition[]>([]);
@@ -30,41 +71,39 @@ function Home(){
                 "X-Auth-Token" : 'bb7ff2b2ebc34e639ed557d487951f77'
             }
           });  // 프록시 설정에 따라 요청을 보냄
-        //   setTodayMatch(response.data);
           console.log(response.data);
-          setTodayMatch(response.data.competitions);
+          const filterdCategory = response.data.competitions.filter((match) => match.name !== "Copa Libertadores")
+          setTodayMatch(filterdCategory);
+          console.log(response.data.competitions[0].emblem)
          
       };
-
-    //   const getMatch =  () =>{
-    //     fetch("/v4/matches",{
-    //         headers:{
-    //             "X-Auth-Token" : 'bb7ff2b2ebc34e639ed557d487951f77'
-    //         }
-    //     }).then((response)=> response.json().then((data)=> console.log(data)))
-       
-    //   }
-    
 
 
    useEffect(()=>{
     // getMatch()
     getPL()
   
-
+ 
    
    },[])
 
+ 
+
     return (
         <>
-        <h1>HOME</h1>
-        <ul>
-            {todayMatch.map((matches)=> (
-                <li key={matches.id}>
-                    {matches.name}
-                </li>
-            ))}
-        </ul>
+        <Wrapper>
+            <Row>
+                {todayMatch.map((matches, index)=> (
+                         <Card>
+                            <img src={matches.emblem}/>
+                            <CardTittle key={index}>{matches.name} </CardTittle>
+                            
+                        </Card>
+                        ))}
+            </Row>
+        </Wrapper>
+        
+        
         </>
     )
 }

@@ -1,14 +1,22 @@
 
-import { useEffect } from 'react';
+import Header from './components/Header';
 import Home from './components/Home';
-
+import { BrowserRouter, Routes, Route } from "react-router-dom"
 
 
 function App() {
 
   return (
     <>
-    <Home></Home>
+    
+  <BrowserRouter>
+    <Header/>
+    <Routes>
+      <Route path='/' element={<Home></Home>}></Route>
+      <Route></Route>
+    </Routes>
+  </BrowserRouter>
+    
     </>
   )
 }
