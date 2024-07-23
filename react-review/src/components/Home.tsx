@@ -4,6 +4,7 @@ import styled from "styled-components";
 import axios from "axios";
 import Fotmob from "fotmob";
 import { response } from "express";
+import Today from "./Today";
 
 const Loader = styled.div`
     height: 20vh;
@@ -61,27 +62,29 @@ interface ICategory{
 }
 
 function Home(){
-    const [todayMatch, setTodayMatch] = useState<ICompetition[]>([]);
+    const [league, setLeague] = useState<ICompetition[]>([]);
     
 
-    const getPL = async () => {
-       
+    const getLeague = async () => {
           const response = await axios.get<ICategory>('v4/competitions',{
             headers:{
                 "X-Auth-Token" : 'bb7ff2b2ebc34e639ed557d487951f77'
             }
           });  // 프록시 설정에 따라 요청을 보냄
-          console.log(response.data);
+        //   console.log(response.data);
           const filterdCategory = response.data.competitions.filter((match) => match.name !== "Copa Libertadores")
-          setTodayMatch(filterdCategory);
-          console.log(response.data.competitions[0].emblem)
+          setLeague(filterdCategory);
+        //   console.log(response.data.competitions[0].emblem)
          
       };
+
+     
 
 
    useEffect(()=>{
     // getMatch()
-    getPL()
+    getLeague()
+    // getTodayMatch()
   
  
    
@@ -93,13 +96,16 @@ function Home(){
         <>
         <Wrapper>
             <Row>
-                {todayMatch.map((matches, index)=> (
-                         <Card>
-                            <img src={matches.emblem}/>
-                            <CardTittle key={index}>{matches.name} </CardTittle>
+                {league.map((matches, index)=> (
+                         <Card key={index}>
+                            <img  src={matches.emblem}/>
+                            <CardTittle>{matches.name} </CardTittle>
                             
                         </Card>
                         ))}
+            </Row>
+            <Row>
+                <Today></Today>
             </Row>
         </Wrapper>
         

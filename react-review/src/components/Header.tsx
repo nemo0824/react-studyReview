@@ -16,9 +16,6 @@ const Col = styled.div`
     align-items: center;
 `
 
-
-
-
 const Items = styled.ul`
     display: flex;
     align-items: center;
@@ -36,7 +33,6 @@ const Item = styled.li`
 function Header() {
     return <>
     <Nav> 
-        {/* <Logo>Logo</Logo> */}
         <Col>
             <Items>
                 <Item>아이템 1</Item>
