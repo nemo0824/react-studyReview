@@ -1,27 +1,53 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import styled from "styled-components";
+// interface ITodayMatches {
+//     utcDate: string;
+//     status: string;
+//     homeTeam: {
+//         name: string;
+//         crest: string;
+//     };
+//     awayTeam: {
+//         name: string;
+//         crest: string;
+//     };
+//     competition: {
+//         emblem: string;
+//     };
+//     score: {
+//         fullTime: {
+//             home: number | null;
+//             away: number | null;
+//         };
+//     }
+// }
 
-interface ITodayMatches {
-    utcDate: string;
-    status: string;
-    homeTeam: {
-        name: string;
-        crest: string;
-    };
-    awayTeam: {
-        name: string;
-        crest: string;
-    };
-    competition: {
-        emblem: string;
-    };
-    score: {
-        fullTime: {
-            home: number | null;
-            away: number | null;
-        };
-    }
-}
+const Table = styled.table`
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px;
+`
+
+const Th = styled.th`
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+    background-color: #bbb;
+    
+`
+const Td = styled.td`
+      border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+    background-color: #f4f4f4;
+    vertical-align: middle;
+   
+`
+const Img = styled.img`
+    width: 30px;
+`
+
 
 
 interface IProcessedMatch {
@@ -32,8 +58,8 @@ interface IProcessedMatch {
     awayTeamName: string;
     awayTeamCrest: string;
     competitionEmblem: string;
-    fullTimeHomeScore: number | null;
-    fullTimeAwayScore: number | null;
+    fullTimeHomeScore: number | string | null;
+    fullTimeAwayScore: number | string | null;
 }
 
 
@@ -63,20 +89,41 @@ function Today(){
     }
     const { todayDate, tomorrowDate } = getTodayDate();
 
+    // 렌더링시 날짜형식 변경
+    const changeUtcDate = (utcDate:any) =>{
+        const date = new Date(utcDate)
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
 
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+    }
+    // 스코어 렌더링시 null일경우 
+    const notPlayedMatch = (score:number|null): string|number => {
+       return score === null ? "경기전" : score
+    }
+
+    // 필요한데이터만 가져오기
     const processMatches = (matches: any[]): IProcessedMatch[] => {
         return matches.map(match => ({
-            utcDate: match.utcDate,
+            utcDate: changeUtcDate(match.utcDate),
             status: match.status,
             homeTeamName: match.homeTeam.name,
             homeTeamCrest: match.homeTeam.crest,
             awayTeamName: match.awayTeam.name,
             awayTeamCrest: match.awayTeam.crest,
             competitionEmblem: match.competition.emblem,
-            fullTimeHomeScore: match.score.fullTime.home,
-            fullTimeAwayScore: match.score.fullTime.away
+            fullTimeHomeScore: notPlayedMatch(match.score.fullTime.home),
+            fullTimeAwayScore: notPlayedMatch(match.score.fullTime.away)
         }));
     };
+    
+    const CheckStatus = (status:string)=> {
+        return status === "FINISHED" ? "red" : "green"
+    }
+    
     
 
     // 오늘 내일 축구매치 호출 api 
@@ -105,36 +152,36 @@ function Today(){
         getTodayMatch()
       },[])
     return <>
-        <table>
+        <Table>
             <tr>
-                <th>리그</th>
-                <th>날짜</th>
-                <th>상태</th>
-                <th>홈팀 이미지</th>
-                <th>홈팀</th>
-                <th>vs</th>
-                <th>어웨이팀 이미지</th>
-                <th>어웨이</th>
-                <th>스코어</th>
-                <th>스코어</th>
+                <Th>리그</Th>
+                <Th>날짜</Th>
+                <Th>상태</Th>
+                <Th>홈팀 이미지</Th>
+                <Th>팀명</Th>
+                <Th>vs</Th>
+                <Th>어웨이팀 이미지</Th>
+                <Th>팀명</Th>
+                <Th>스코어</Th>
+                <Th>스코어</Th>
             </tr>
             {TodayMatches.map((today)=>(
                  <tr>
-                 <td><img  src={today.competitionEmblem}/></td>
-                 <td>{today.utcDate}</td>
-                 <td>{today.status}</td>
-                 <td><img  src={today.homeTeamCrest}/></td>
-                 <td>{today.homeTeamName}</td>
-                 <td>vs</td>
-                 <td><img  src={today.awayTeamCrest}/></td>
-                 <td>{today.awayTeamName}</td>
-                 <td>{today.fullTimeHomeScore}</td>
-                 <td>{today.fullTimeAwayScore}</td>
+                 <Td><Img  src={today.competitionEmblem}/></Td>
+                 <Td>{today.utcDate}</Td>
+                 <Td color={today.status}>{today.status}</Td>
+                 <Td><Img  src={today.homeTeamCrest}/></Td>
+                 <Td>{today.homeTeamName}</Td>
+                 <Td>vs</Td>
+                 <Td><Img  src={today.awayTeamCrest}/></Td>
+                 <Td>{today.awayTeamName}</Td>
+                 <Td>{today.fullTimeHomeScore}</Td>
+                 <Td>{today.fullTimeAwayScore}</Td>
              </tr>
             ))
            
             }
-        </table>
+        </Table>
         
     </>
 }

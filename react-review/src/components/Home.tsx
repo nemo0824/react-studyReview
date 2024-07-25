@@ -96,6 +96,9 @@ function Home(){
         <>
         <Wrapper>
             <Row>
+                <Today></Today>
+            </Row>
+            <Row>
                 {league.map((matches, index)=> (
                          <Card key={index}>
                             <img  src={matches.emblem}/>
@@ -104,9 +107,7 @@ function Home(){
                         </Card>
                         ))}
             </Row>
-            <Row>
-                <Today></Today>
-            </Row>
+           
         </Wrapper>
         
         
