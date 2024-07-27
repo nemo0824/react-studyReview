@@ -5,6 +5,9 @@ import axios from "axios";
 import Fotmob from "fotmob";
 import { response } from "express";
 import Today from "./Today";
+import { useQuery } from "react-query";
+import { leagueFetch } from "../api";
+
 
 const Loader = styled.div`
     height: 20vh;
@@ -57,38 +60,34 @@ interface ICompetition{
 }
 
 
-interface ICategory{
+export interface ICategory{
     competitions: ICompetition[]
 }
 
 function Home(){
-    const [league, setLeague] = useState<ICompetition[]>([]);
+    const {isLoading, data} = useQuery<ICompetition[]>("allLeague", leagueFetch)
+    // const {isLoading, data} = useQuery("allLeague", League)
+
+    // const [league, setLeague] = useState<ICompetition[]>([]);
     
 
-    const getLeague = async () => {
-          const response = await axios.get<ICategory>('v4/competitions',{
-            headers:{
-                "X-Auth-Token" : 'bb7ff2b2ebc34e639ed557d487951f77'
-            }
-          });  // 프록시 설정에 따라 요청을 보냄
-        //   console.log(response.data);
-          const filterdCategory = response.data.competitions.filter((match) => match.name !== "Copa Libertadores")
-          setLeague(filterdCategory);
-        //   console.log(response.data.competitions[0].emblem)
-         
-      };
+    // const getLeague = async () => {
+    //       const response = await axios.get<ICategory>('v4/competitions',{
+    //         headers:{
+    //             "X-Auth-Token" : 'bb7ff2b2ebc34e639ed557d487951f77'
+    //         }
+    //       });  
+    //       const filterdCategory = response.data.competitions.filter((match) => match.name !== "Copa Libertadores")
+    //       setLeague(filterdCategory);
+
+    //   };
 
      
 
 
-   useEffect(()=>{
-    // getMatch()
-    getLeague()
-    // getTodayMatch()
-  
- 
-   
-   },[])
+//    useEffect(()=>{
+//     getLeague()
+//    },[])
 
  
 
@@ -98,7 +97,7 @@ function Home(){
             <Row>
                 <Today></Today>
             </Row>
-            <Row>
+            {/* <Row>
                 {league.map((matches, index)=> (
                          <Card key={index}>
                             <img  src={matches.emblem}/>
@@ -106,6 +105,23 @@ function Home(){
                             
                         </Card>
                         ))}
+               
+            </Row> */}
+            <Row>
+                {
+                    isLoading ? (<h1>Loading....</h1>
+
+                    ) : (
+                        data?.map((element, index)=> (
+                            <Card key={index}>
+                                <img src={element.emblem}/>
+                                <CardTittle>{element.name}</CardTittle>
+                            </Card>
+                        ))
+
+                        
+                    )
+                }
             </Row>
            
         </Wrapper>

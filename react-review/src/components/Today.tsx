@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { set } from "react-hook-form";
 import styled from "styled-components";
 // interface ITodayMatches {
 //     utcDate: string;
@@ -66,7 +67,7 @@ interface IProcessedMatch {
 
 function Today(){
     const [TodayMatches, setTodayMatches] = useState<IProcessedMatch[]>([])
-
+  
 
 
     // 날짜 변환 함수
@@ -120,10 +121,6 @@ function Today(){
         }));
     };
     
-    const CheckStatus = (status:string)=> {
-        return status === "FINISHED" ? "red" : "green"
-    }
-    
     
 
     // 오늘 내일 축구매치 호출 api 
@@ -150,8 +147,10 @@ function Today(){
 
       useEffect(()=>{
         getTodayMatch()
+        
       },[])
     return <>
+    
         <Table>
             <tr>
                 <Th>리그</Th>
@@ -182,6 +181,8 @@ function Today(){
            
             }
         </Table>
+       
+    
         
     </>
 }
